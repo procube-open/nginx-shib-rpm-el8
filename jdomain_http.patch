@@ -1,0 +1,39 @@
+--- a/ngx_upstream_jdomain-master/ngx_http_upstream_jdomain.c	2017-07-18 13:07:04.000000000 +0000
++++ b/ngx_upstream_jdomain-master/ngx_http_upstream_jdomain.c	2022-01-06 02:34:37.596953040 +0000
+@@ -516,9 +516,9 @@
+ 
+ 	rc = ngx_ssl_set_session(pc->connection, ssl_session);
+ 
+-	ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
+-			"set session: %p:%d",
+-			ssl_session, ssl_session ? ssl_session->references : 0);
++//	ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
++//			"set session: %p:%d",
++//			ssl_session, ssl_session ? ssl_session->references : 0);
+ 
+ 	return rc;
+ }
+@@ -539,8 +539,8 @@
+ 		return;
+ 	}
+ 
+-	ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
+-			"save session: %p:%d", ssl_session, ssl_session->references);
++//	ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
++//			"save session: %p:%d", ssl_session, ssl_session->references);
+ 
+ 	peer = &urpd->conf->peers[urpd->current];
+ 
+@@ -550,9 +550,9 @@
+ 
+ 	if (old_ssl_session) {
+ 
+-		ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
+-				"old session: %p:%d",
+-				old_ssl_session, old_ssl_session->references);
++//		ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
++//				"old session: %p:%d",
++//				old_ssl_session, old_ssl_session->references);
+ 
+ 
+ 		ngx_ssl_free_session(old_ssl_session);
