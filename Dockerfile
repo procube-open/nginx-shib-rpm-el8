@@ -1,5 +1,6 @@
 FROM centos:8
 MAINTAINER "Shigeki Kitamura" <kitamura@procube.jp>
+RUN sed -i -e 's/^mirrorlist/#mirrorlist/g' -e 's/^#baseurl=http:\/\/mirror/baseurl=http:\/\/vault/g' /etc/yum.repos.d/CentOS-*repo
 RUN groupadd -g 111 builder
 RUN useradd -g builder -u 111 builder
 ENV HOME /home/builder

@@ -1,5 +1,5 @@
---- original/nginx.spec	2022-01-06 03:14:14.315310520 +0000
-+++ SOURCE/nginx.spec	2022-01-06 07:45:07.281969071 +0000
+--- original/nginx.spec	2022-05-25 05:03:29.359241495 +0000
++++ SOURCE/nginx.spec	2022-05-25 05:06:27.031734446 +0000
 @@ -4,6 +4,16 @@
  %define nginx_group nginx
  %define nginx_loggroup adm
@@ -34,12 +34,35 @@
  BuildRequires: systemd
  %define os_minor %(lsb_release -rs | cut -d '.' -f 2)
  %if %{os_minor} >= 4
-@@ -48,14 +62,22 @@
+@@ -36,6 +50,22 @@
+ %endif
+ %endif
+ 
++%if 0%{?rhel} == 8
++BuildRequires: redhat-lsb-core
++%define _group System Environment/Daemons
++# %define epoch 1
++# Epoch: %{epoch}
++Requires(pre): shadow-utils
++Requires: systemd
++Requires: crontabs
++Requires: logrotate
++# make sure group 'apache' exists
++Requires: httpd
++BuildRequires: systemd
++Requires: openssl >= 1.0.2
++BuildRequires: openssl-devel >= 1.0.2
++%endif
++
+ %if 0%{?suse_version} == 1315
+ %define _group Productivity/Networking/Web/Servers
+ %define nginx_loggroup trusted
+@@ -48,14 +78,22 @@
  # end of distribution specific definitions
  
  %define main_version 1.15.3
 -%define main_release 1%{?dist}.ngx
-+%define main_release 3%{?dist}.ngx
++%define main_release 4%{?dist}.ngx
  
  %define bdir %{_builddir}/%{name}-%{main_version}
  
@@ -59,7 +82,7 @@
  
  Summary: High performance web server
  Name: nginx
-@@ -65,7 +87,7 @@
+@@ -65,7 +103,7 @@
  URL: http://nginx.org/
  Group: %{_group}
  
@@ -68,7 +91,7 @@
  Source1: logrotate
  Source2: nginx.init.in
  Source3: nginx.sysconf
-@@ -78,13 +100,28 @@
+@@ -78,13 +116,28 @@
  Source11: nginx-debug.service
  Source12: COPYRIGHT
  Source13: nginx.check-reload.sh
@@ -97,7 +120,7 @@
  Provides: webserver
  
  %description
-@@ -96,14 +133,37 @@
+@@ -96,14 +149,37 @@
  %endif
  
  %prep
@@ -136,7 +159,7 @@
  ./configure %{BASE_CONFIGURE_ARGS} \
      --with-cc-opt="%{WITH_CC_OPT}" \
      --with-ld-opt="%{WITH_LD_OPT}" \
-@@ -154,6 +214,11 @@
+@@ -154,6 +230,11 @@
  %{__install} -p -D -m 0644 %{bdir}/objs/nginx.8 \
      $RPM_BUILD_ROOT%{_mandir}/man8/nginx.8
  
@@ -148,7 +171,7 @@
  %if %{use_systemd}
  # install systemd-specific files
  %{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
-@@ -208,6 +273,8 @@
+@@ -208,6 +289,8 @@
  %config(noreplace) %{_sysconfdir}/nginx/koi-utf
  %config(noreplace) %{_sysconfdir}/nginx/koi-win
  %config(noreplace) %{_sysconfdir}/nginx/win-utf
@@ -157,7 +180,7 @@
  
  %config(noreplace) %{_sysconfdir}/logrotate.d/nginx
  %config(noreplace) %{_sysconfdir}/sysconfig/nginx
-@@ -240,18 +307,16 @@
+@@ -240,18 +323,16 @@
  getent group %{nginx_group} >/dev/null || groupadd -r %{nginx_group}
  getent passwd %{nginx_user} >/dev/null || \
      useradd -r -g %{nginx_group} -s /sbin/nologin \
